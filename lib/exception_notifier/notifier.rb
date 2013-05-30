@@ -31,7 +31,7 @@ class ExceptionNotifier
         { :sender_address => default_sender_address,
           :exception_recipients => default_exception_recipients,
           :email_prefix => default_email_prefix,
-          :sections => default_sections
+          :sections => default_sections,
 		:expire_time => default_expire_in }
       end
     end
