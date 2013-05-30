@@ -23,11 +23,16 @@ class ExceptionNotifier
         %w(request session environment backtrace)
       end
 
+	def default_expire_in
+	  nil
+	end			
+
       def default_options
         { :sender_address => default_sender_address,
           :exception_recipients => default_exception_recipients,
           :email_prefix => default_email_prefix,
-          :sections => default_sections }
+          :sections => default_sections 
+	    :expire_time => default_expire_in }
       end
     end
 
@@ -52,9 +57,13 @@ class ExceptionNotifier
 
       prefix   = "#{@options[:email_prefix]}#{@kontroller.controller_name}##{@kontroller.action_name}"
       subject  = "#{prefix} (#{@exception.class}) #{@exception.message.inspect}"
-
-      mail(:to => @options[:exception_recipients], :from => @options[:sender_address], :subject => subject) do |format|
-        format.text { render "#{mailer_name}/exception_notification" }
+	
+	if Rails.cache.fetch(subject).blank?
+	  mail(:to => @options[:exception_recipients], :from => @options[:sender_address], :subject => subject) do |format|
+          format.text { render "#{mailer_name}/exception_notification" }
+	  end
+	  @excetion_subject[subject] = true
+	  Rails.cache.write(subject,Time.now,:expires_in => @options[:expire_time])	
       end
     end
 
