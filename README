@@ -18,10 +18,12 @@ As of Rails 3 ExceptionNotifier is used as a rack middleware
   Whatever::Application.config.middleware.use ExceptionNotifier,
     :email_prefix => "[Whatever] ",
     :sender_address => %{"notifier" <notifier@example.com>},
-    :exception_recipients => %w{exceptions@example.com}
+    :exception_recipients => %w{exceptions@example.com},
+    :expire_time => 24.hours or 25.min
 
 == Customization
-
+If you don't want same exception mail in a day than set :expire_time to 24 hours
+By default it will send mail on each exception.
 By default, the notification email includes four parts: request, session,
 environment, and backtrace (in that order). You can customize how each of those
 sections are rendered by placing a partial named for that part in your
